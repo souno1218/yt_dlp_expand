@@ -1,1 +1,1 @@
-from .yt_dlp_expand import ExpandYt_dlp
+from .main_script import ExpandYt_dlp
