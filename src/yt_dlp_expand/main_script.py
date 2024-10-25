@@ -8,7 +8,7 @@ import os, ffmpeg, base64, pathlib, argparse, platform, subprocess
 
 def main():
     parser = argparse.ArgumentParser()
-    txt = "0:bestaudio(mp3),1:bestaudio(opus),2:720p,mp4(h264,mp4a),3:bestvideo(mp4(h264,mp4a)),4:bestvideo(mp4(vp9,opus))"
+    txt = "0:bestaudio(mp3),\n1:bestaudio(opus),\n2:720p,mp4(h264,mp4a),\n3:bestvideo(mp4(h264,mp4a)),\n4:bestvideo(mp4(vp9,opus))"
     parser.add_argument("DownloadMode", type=int, help=txt, choices=list(range(5)))
     parser.add_argument("url", type=str, help="url")
     parser.add_argument("-p", "--path", type=str, help="downloadMode dir path")
