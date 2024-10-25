@@ -1,6 +1,6 @@
 ## https://qiita.com/soun1218/items/3f07fbaa7029208dd789
 
-from mutagen.id3 import ID3
+from mutagen.id3 import APIC, ID3
 from mutagen.oggopus import OggOpus
 from mutagen.flac import Picture
 import os, ffmpeg, base64, pathlib, argparse, platform, subprocess
@@ -45,9 +45,15 @@ class ExpandYt_dlp:
                 self.is_pc = False
 
     def getTitle(self):
-        script = f"yt-dlp '{self.download_url}' --skip-download --print 'title' --no-check-certificate --no-playlist --extractor-args youtube:lang=ja;player-client=web"
+        script = (
+            f"yt-dlp '{self.download_url}' "
+            "--skip-download "
+            "--print 'title' "
+            "--no-check-certificate "
+            "--no-playlist "
+            "--extractor-args youtube:lang=ja;player-client=web"
+        )
         cp = subprocess.run(script, encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        # cp = subprocess.run(script, encoding='utf-8', stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True,capture_output=True,text=True)
         self.title = cp.stdout.replace("\n", "")
         replaceList = {":": "-", "[": "「", "]": "」", "/": "／", "\n": " ", "'": "’"}
         for key, value in replaceList.items():
@@ -57,46 +63,59 @@ class ExpandYt_dlp:
     def download_thumbnail_jpg(self):
         self.thumbnail_path = f"{self.output_path}/{self.title}.jpg"
         script = (
-            f"yt-dlp '{self.download_url}' --no-check-certificate  --no-playlist --skip-download "
-            f"--write-thumbnail --convert-thumbnails jpg --output '{self.output_path}/{self.title}'"
-        )  # 9/6 変更
+            f"yt-dlp '{self.download_url}' "
+            "--no-check-certificate "
+            "--no-playlist "
+            "--skip-download "
+            "--write-thumbnail "
+            "--convert-thumbnails jpg "
+            f"--output '{self.output_path}/{self.title}'"
+        )
         subprocess.run(script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         print(f"download_thumbnail_jpg Done")
 
     def download_file(self):
-        # 参考:https://vlike-vlife.netlify.app/posts/cli_yt-dl
         script = f"yt-dlp --no-check-certificate --no-playlist '{self.download_url}' "
         match self.mode_num:
             case 0:
-                script += f"-o '{self.output_path}/{self.title}.%(ext)s' "
-                script += "-f 'bestaudio' "
-                script += "--extract-audio "
-                script += "--audio-format mp3 "
+                script += (
+                    f"-o '{self.output_path}/{self.title}.%(ext)s' "
+                    "-f 'bestaudio' "
+                    "--extract-audio "
+                    "--audio-format mp3 "
+                )
                 self.file_path = f"{self.output_path}/{self.title}.{self.ext}"
+                print(script)
+                print(self.file_path)
             case 1:
-                script += f"-o '{self.output_path}/{self.title}.%(ext)s' "
-                script += "-f 'bestaudio[acodec~=opus]' "
-                script += "--extract-audio "
+                script += f"-o '{self.output_path}/{self.title}.%(ext)s' -f 'bestaudio[acodec~=opus]' --extract-audio "
                 self.file_path = f"{self.output_path}/{self.title}.{self.ext}"
             case 2:
-                script += f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
-                script += "-f \"bestvideo*[height=720][fps<=30][vcodec~='^(avc|h264)']+bestaudio[acodec~=mp4a]\" "
+                script += (
+                    f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
+                    "-f \"bestvideo*[height=720][fps<=30][vcodec~='^(avc|h264)']"
+                    '+bestaudio[acodec~=mp4a]" '
+                )
                 self.file_path = f"{self.output_path}/{self.title}_before.{self.ext}"
             case 3:
-                script += f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
-                script += "-f \"bestvideo*[vcodec~='^(avc|h264)']+bestaudio[acodec~=mp4a]\" "
+                script += (
+                    f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
+                    "-f \"bestvideo*[vcodec~='^(avc|h264)']+bestaudio[acodec~=mp4a]\" "
+                )
                 self.file_path = f"{self.output_path}/{self.title}_before.{self.ext}"
             case 4:
-                script += f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
-                script += "-f 'bestvideo+bestaudio/best' "
-                script += "--merge-output-format mp4"
+                script += (
+                    f"-o '{self.output_path}/{self.title}_before.%(ext)s' "
+                    "-f 'bestvideo+bestaudio/best' "
+                    "--merge-output-format mp4"
+                )
                 self.file_path = f"{self.output_path}/{self.title}_before.{self.ext}"
         subprocess.run(script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         print("UseYt_dlp_iphone Done")
 
     def marge_file_thumbnail_mp4(self):
         video = ffmpeg.input(self.file_path)
-        cover = ffmpeg.input(self.thumbnail_path)  # 9/6 変更
+        cover = ffmpeg.input(self.thumbnail_path)
         (
             ffmpeg.output(
                 video,
@@ -118,26 +137,30 @@ class ExpandYt_dlp:
     def crop_thumbnail_square(self):
         probe = ffmpeg.probe(self.thumbnail_path)
         width = min(probe["streams"][0]["width"], probe["streams"][0]["height"])
-        ffmpeg.input(self.thumbnail_path).filter("crop", width, width).output(self.thumbnail_path).run(
-            overwrite_output=True
+        (
+            ffmpeg.input(self.thumbnail_path)
+            .filter("crop", width, width)
+            .output(self.thumbnail_path)
+            .run(overwrite_output=True)
         )
         print("crop_thumbnail_square Done")
 
     def marge_file_thumbnail_mp3(self):
-        # 参考:https://qiita.com/moshi/items/0fd2cd8c394ffa927239
-        tags = ID3(self.file_path)
+        file = ID3(self.file_path)
+        meta_data = APIC()
         with open(self.thumbnail_path, "rb") as img_file:
-            cover_img_byte_str = img_file.read()
-            tags.mime = "image/jpeg"
-            tags.type = 3
-            tags.data = cover_img_byte_str
-        tags.save()
+            meta_data.encoding = 3
+            meta_data.mime = "image/jpeg"
+            meta_data.type = 3
+            meta_data.desc = "Cover"
+            meta_data.data = img_file.read()
+            file.add(meta_data)
+        file.save(v2_version=3)
 
         os.remove(self.thumbnail_path)
         print("marge_file_thumbnail_mp3 Done")
 
     def marge_file_thumbnail_opus(self):
-        # 参考:https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/postprocessor/embedthumbnail.py
         pic = Picture()
         f = OggOpus(self.file_path)
         pic.mime = f"image/jpeg"
