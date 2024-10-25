@@ -9,18 +9,18 @@ Requires yt-dlp,mutagen,ffmpeg-python. If not, installation is automatic.
 
 ### Installing
 First, activate the virtual environment if it is separated by conda.
-```zsh
+```bash
 #examples
 conda activate myenv
 ```
 Download and Installation
-```zsh
+```bash
 pip install git+https://github.com/souno1218/yt_dlp_expand.git
 ```
 
 ## Running
 #### Use directly from Terminal or other sources
-```zsh
+```bash
 yt_dlp_expand [-h] [-p PATH] Download_mode url
 ```
 positional arguments:
