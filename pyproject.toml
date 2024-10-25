@@ -21,6 +21,9 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[project.scripts]
+yt_dlp_expand = "yt_dlp_expand:main"
+
 
 #!python -m build
 # pip install -U "yt-dlp[default]" "mutagen" "ffmpeg-python"

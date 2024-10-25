@@ -1,10 +1,20 @@
 ## https://qiita.com/soun1218/items/3f07fbaa7029208dd789
 
-
 from mutagen.id3 import ID3
 from mutagen.oggopus import OggOpus
 from mutagen.flac import Picture
-import os, ffmpeg, base64, pathlib, platform, subprocess
+import os, ffmpeg, base64, pathlib, argparse, platform, subprocess
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    txt = "0:bestaudio(mp3),1:bestaudio(opus),2:720p,mp4(h264,mp4a),3:bestvideo(mp4(h264,mp4a)),4:bestvideo(mp4(vp9,opus))"
+    parser.add_argument("DownloadMode", type=int, help=txt, choices=list(range(5)))
+    parser.add_argument("url", type=str, help="url")
+    parser.add_argument("-p", "--path", type=str, help="downloadMode dir path")
+    args = parser.parse_args()
+    Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
+    Class_Yt_dlp.main_func()
 
 
 class ExpandYt_dlp:
