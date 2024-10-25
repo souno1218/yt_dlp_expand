@@ -1,5 +1,7 @@
 # yt_dlp_expand
-
+Originally created for use from the iPhone shortcut app in an article called Qiita.   
+Uploaded for download.   
+[iPhoneでショートカットappを使って、safariからYouTubeをダウンロードする](https://qiita.com/soun1218/items/3f07fbaa7029208dd789)   
 
 ## Getting Started
 ### Prerequisites
@@ -7,17 +9,39 @@ Requires yt-dlp,mutagen,ffmpeg-python. If not, installation is automatic.
 
 ### Installing
 First, activate the virtual environment if it is separated by conda.
-```
+```zsh
 #examples
 conda activate myenv
 ```
 Download and Installation
-```
+```zsh
 pip install git+https://github.com/souno1218/yt_dlp_expand.git
 ```
 
 ## Running
-See how_to_use.ipynb in the info for execution
+#### Use directly from Terminal or other sources
+```zsh
+yt_dlp_expand [-h] [-p PATH] Download_mode url
+```
+positional arguments:
+  Download_mode         0:bestaudio(mp3),
+                        1:bestaudio(opus),
+                        2:720p,mp4(h264,mp4a),
+                        3:bestvideo(mp4(h264,mp4a)),
+                        4:bestvideo(mp4(vp9,opus))
+  url                   url
+
+options:
+  -h, --help            show this help message and exit
+  -p PATH, --path PATH  downloadMode dir path, default: "~/Downloads"
+
+#### Used from python
+```python
+from yt_dlp_expand import ExpandYt_dlp
+Class_Yt_dlp = ExpandYt_dlp(DownloadMode, url, path)
+Class_Yt_dlp.main_func()
+```
+For each argument, see Terminal use.
 
 ## Built With
 * [yt-dlp](https://github.com/yt-dlp/yt-dlp) - main
