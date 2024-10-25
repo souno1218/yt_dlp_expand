@@ -141,21 +141,20 @@ class ExpandYt_dlp:
         print("marge_file_thumbnail_opus Done")
 
     def main_func(self):
-        # {0:bestaudio(mp3),1:bestaudio(opus),2:normalvideo(mp4),3:bestvideo(mp4),4:bestvideo(mp4)}
         self.getTitle()
         self.download_thumbnail_jpg()
         self.download_file()
         match self.mode_num:
-            case 0:
+            case 0:  # bestaudio(mp3)
                 self.crop_thumbnail_square()
                 self.marge_file_thumbnail_mp3()
-            case 1:
+            case 1:  # bestaudio(opus)
                 self.crop_thumbnail_square()
                 self.marge_file_thumbnail_opus()
-            case 2:
+            case 2:  # 720p,mp4(h264,mp4a)
                 self.marge_file_thumbnail_mp4()
-            case 3:
+            case 3:  # bestvideo(mp4(h264,mp4a))
                 self.marge_file_thumbnail_mp4()
-            case 4:
+            case 4:  # bestvideo(mp4(vp9,opus))
                 self.marge_file_thumbnail_mp4()
         print("all process Done")

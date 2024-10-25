@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt_dlp_expand"
 version = "0.1"
 description = "説明"
-#readme = "README.md、相対ぱす"
+readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT License"}
 authors = [{name = "souno1218", email = "supinosaurusuz@gmail.com"},]
@@ -22,4 +22,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 #!python -m build
-# pip install "yt-dlp[default]" "mutagen" "ffmpeg-python"
+# pip install -U "yt-dlp[default]" "mutagen" "ffmpeg-python"
