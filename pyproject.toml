@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yt_dlp_expand"
+version = "0.1"
+description = "説明"
+#readme = "README.md、相対ぱす"
+requires-python = ">=3.10"
+license = {text = "MIT License"}
+authors = [{name = "souno1218", email = "supinosaurusuz@gmail.com"},]
+dependencies = ["yt-dlp[default]","mutagen","ffmpeg-python"]
+
+[project.urls]
+Homepage = "https://qiita.com/soun1218/items/3f07fbaa7029208dd789"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+#!python -m build
+# pip install "yt-dlp[default]" "mutagen" "ffmpeg-python"
