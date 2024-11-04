@@ -33,7 +33,9 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -p PATH, --path PATH  downloadMode dir path, default: "~/Downloads"
+  -p PATH, --path PATH  downloadMode dir path, 
+
+path default: PC -> "~/Downloads" , iOS -> "~/Documents"
 
 #### Used from python
 ```python

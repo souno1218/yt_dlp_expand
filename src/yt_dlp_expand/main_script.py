@@ -12,9 +12,34 @@ def main():
     parser.add_argument("DownloadMode", type=int, help=txt, choices=list(range(5)))
     parser.add_argument("url", type=str, help="url")
     parser.add_argument("-p", "--path", type=str, help="downloadMode dir path")
+    parser.add_argument("-l", "--playlist", type=bool, help="use playlist or not ", default=False)
     args = parser.parse_args()
-    Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
-    Class_Yt_dlp.main_func()
+    if args.playlist and ("&list=" in args.url):
+        list_url = split_playlist_url(args.url)
+        for i in list_url:
+            Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, i, args.path)
+            Class_Yt_dlp.main_func()
+    else:
+        Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
+        Class_Yt_dlp.main_func()
+
+
+def split_playlist_url(playlist_url):
+    script = (
+        f"yt-dlp '{playlist_url}' "
+        "--print '%(url)s' "
+        "--skip-download "
+        "--flat-playlist "
+        "--no-check-certificate "
+        "--no-check-certificate "
+        "--extractor-args youtube:lang=ja;player-client=web"
+    )
+    cp = subprocess.run(script, encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    list_url = []
+    for i in cp.stdout.split("\n"):
+        if not len(i) == 0:
+            list_url.append(i)
+    return list_url
 
 
 class ExpandYt_dlp:
@@ -48,7 +73,7 @@ class ExpandYt_dlp:
         script = (
             f"yt-dlp '{self.download_url}' "
             "--skip-download "
-            "--print 'title' "
+            "--print '%(title)s' "
             "--no-check-certificate "
             "--no-playlist "
             "--extractor-args youtube:lang=ja;player-client=web"
