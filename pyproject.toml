@@ -10,7 +10,11 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT License"}
 authors = [{name = "souno1218", email = "supinosaurusuz@gmail.com"},]
-dependencies = ["yt-dlp[default]","mutagen","ffmpeg-python"]
+dependencies = [
+    "yt-dlp[default]",
+    "mutagen",
+    "ffmpeg-python>=0.2.0",
+]
 
 [project.urls]
 Homepage = "https://qiita.com/soun1218/items/3f07fbaa7029208dd789"
@@ -20,6 +24,11 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]
 
 [project.scripts]
 yt_dlp_expand = "yt_dlp_expand:main"
