@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt_dlp_expand"
-version = "0.4.7"
+version = "0.4.10"
 description = "説明"
 readme = "README.md"
 requires-python = ">=3.10"

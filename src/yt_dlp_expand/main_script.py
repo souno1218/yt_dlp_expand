@@ -6,8 +6,6 @@ from mutagen.oggopus import OggOpus
 from concurrent.futures import ThreadPoolExecutor
 import os, ffmpeg, base64, pathlib, argparse, platform, subprocess, random, string
 
-__version__ = "0.4.7"
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,11 +17,14 @@ def main():
         "-l",
         "--download_playlist",
         help="use playlist or not (default: False)",
-        action="store_true",
+        type=str,
+        default=False,
     )
 
     args = parser.parse_args()
-    if args.download_playlist and ("&list=" in args.url):
+    args.download_playlist = str_to_bool(args.download_playlist)
+    is_url_contain_playlist = ("&list=" in args.url) or ("playlist?list=" in args.url)
+    if args.download_playlist and is_url_contain_playlist:
         print("download playlist")
         is_pc = check_is_pc()
         if args.path is None:
@@ -53,7 +54,7 @@ def main():
         for i in list_url:
             Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, i, dir_path)
             Class_Yt_dlp.main_func()
-    elif "&list=" in args.url and (not args.download_playlist):
+    elif is_url_contain_playlist:
         print("not download playlist")
         Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
         Class_Yt_dlp.main_func()
@@ -371,3 +372,16 @@ class ExpandYt_dlp:
             print("all process Done")
         else:
             raise ValueError("Failed.")
+
+
+def str_to_bool(v):
+    """コマンドライン引数の文字列をboolに変換する"""
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        # エラーメッセージはargparseが自動で生成してくれる
+        raise argparse.ArgumentTypeError("Boolean value expected.")
