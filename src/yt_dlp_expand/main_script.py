@@ -6,6 +6,8 @@ from mutagen.oggopus import OggOpus
 from concurrent.futures import ThreadPoolExecutor
 import os, ffmpeg, base64, pathlib, argparse, platform, subprocess, random, string
 
+__version__ = "0.4.7"
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -14,10 +16,15 @@ def main():
     parser.add_argument("url", type=str, help="url")
     parser.add_argument("-p", "--path", type=str, help="downloadMode dir path")
     parser.add_argument(
-        "-l", "--playlist", type=bool, help="use playlist or not ", default=False
+        "-l",
+        "--download_playlist",
+        help="use playlist or not (default: False)",
+        action="store_true",
     )
+
     args = parser.parse_args()
-    if args.playlist and ("&list=" in args.url):
+    if args.download_playlist and ("&list=" in args.url):
+        print("download playlist")
         is_pc = check_is_pc()
         if args.path is None:
             if is_pc:
@@ -33,17 +40,23 @@ def main():
         if playlist_title is None:
             print("Failed to retrieve playlist title.")
         elif not os.path.isfile(dir_path):
+            print(f"playlist_title: {playlist_title}")
             dir_path = f"{dir_path}/{playlist_title}"
 
         if os.path.isfile(dir_path):
             raise ValueError(f"A path specified as a directory is a file : {dir_path}")
         if not os.path.isdir(dir_path):
             os.makedirs(dir_path)
+            print(f"makedirs: {dir_path}")
 
         list_url = split_playlist_url(args.url)
         for i in list_url:
             Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, i, dir_path)
             Class_Yt_dlp.main_func()
+    elif "&list=" in args.url and (not args.download_playlist):
+        print("not download playlist")
+        Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
+        Class_Yt_dlp.main_func()
     else:
         Class_Yt_dlp = ExpandYt_dlp(args.DownloadMode, args.url, args.path)
         Class_Yt_dlp.main_func()
