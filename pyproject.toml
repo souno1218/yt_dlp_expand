@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt_dlp_expand"
-version = "0.3"
+version = "0.4.2"
 description = "説明"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,6 +14,8 @@ dependencies = [
     "yt-dlp[default]",
     "mutagen",
     "ffmpeg-python>=0.2.0",
+    "twine>=6.1.0",
+    "build>=1.2.2.post1",
 ]
 
 [project.urls]
