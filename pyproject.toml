@@ -14,8 +14,6 @@ dependencies = [
     "yt-dlp[default]",
     "mutagen",
     "ffmpeg-python>=0.2.0",
-    "twine>=6.1.0",
-    "build>=1.2.2.post1",
 ]
 
 [project.urls]
