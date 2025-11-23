@@ -114,7 +114,7 @@ def split_playlist_url(playlist_url):
 def check_is_pc():
     os_name = platform.system()
     device = platform.platform()  # .split("-")[2]
-    if os_name in ["Darwin", "iOS"]:
+    if os_name in ["Darwin", "iOS", "iPadOS"]:
         if ("iPhone" in device) or ("iPad" in device):
             return False
         else:
