@@ -16,6 +16,7 @@ import platform
 import random
 import string
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from enum import IntEnum
 
@@ -69,7 +70,7 @@ def get_playlist_title(playlist_url: str) -> str | None:
     """
     cp = subprocess.run(
         [
-            "yt-dlp",
+            sys.executable, "-m", "yt_dlp",
             playlist_url,
             "-I", "1:1",
             "--print", "%(playlist_title)s",
@@ -92,7 +93,7 @@ def split_playlist_url(playlist_url: str) -> list[str]:
     """
     cp = subprocess.run(
         [
-            "yt-dlp",
+            sys.executable, "-m", "yt_dlp",
             playlist_url,
             "--print", "%(url)s",
             "--skip-download",
@@ -207,7 +208,7 @@ class ExpandYt_dlp:
         """
         cp = subprocess.run(
             [
-                "yt-dlp",
+                sys.executable, "-m", "yt_dlp",
                 self.download_url,
                 "--skip-download",
                 "--print", "%(title)s",
@@ -236,7 +237,7 @@ class ExpandYt_dlp:
 
         subprocess.run(
             [
-                "yt-dlp",
+                sys.executable, "-m", "yt_dlp",
                 self.download_url,
                 "--no-check-certificate",
                 "--no-playlist",
@@ -270,7 +271,7 @@ class ExpandYt_dlp:
             stem = self.output_path / f"{self.random_title}_before"
 
         base_cmd = [
-            "yt-dlp",
+            sys.executable, "-m", "yt_dlp",
             "--no-check-certificate",
             "--no-playlist",
             self.download_url,

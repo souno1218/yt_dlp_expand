@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt_dlp_expand"
-version = "0.4.12.dev1"
+version = "0.4.12.dev2"
 description = "yt-dlp wrapper for downloading YouTube videos/audio with embedded thumbnails"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "souno1218", email = "supinosaurusuz@gmail.com"},]
 dependencies = [
     "yt-dlp[default]",
