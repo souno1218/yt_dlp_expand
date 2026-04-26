@@ -1,57 +1,98 @@
 # yt_dlp_expand
-Originally created for use from the iPhone shortcut app in an article called Qiita.   
-Uploaded for download.   
-[iPhoneでショートカットappを使って、safariからYouTubeをダウンロードする](https://qiita.com/soun1218/items/3f07fbaa7029208dd789)   
+
+yt-dlp を使って動画・音声をダウンロードし、サムネイルを自動埋め込みするラッパーパッケージです。  
+iPhoneのショートカットApp + a-Shell からの呼び出しを想定して作成されました。
+
+[iPhoneでショートカットappを使って、safariからYouTubeをダウンロードする](https://qiita.com/soun1218/items/3f07fbaa7029208dd789)
 
 ## Getting Started
+
 ### Prerequisites
-Requires yt-dlp,mutagen,ffmpeg-python. If not, installation is automatic.
+
+以下が自動的にインストールされます。 / The following are installed automatically:
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [mutagen](https://mutagen.readthedocs.io/en/latest/)
+- [ffmpeg-python](https://github.com/kkroening/ffmpeg-python)
+
+また、システムに **ffmpeg** がインストールされている必要があります。  
+ffmpeg must also be installed on your system.
 
 ### Installing
-First, activate the virtual environment if it is separated by conda.
+
+**PyPI（a-Shell 推奨）:**
 ```bash
-#examples
-conda activate myenv
+pip install yt_dlp_expand
 ```
-Download and Installation
+
+**git から（mac/linux 等の通常環境）:**
 ```bash
 pip install git+https://github.com/souno1218/yt_dlp_expand.git
 ```
 
-## Running
-#### Use directly from Terminal or other sources
+## Download Modes
+
+| Mode | 説明 |
+|------|------|
+| `0` | bestaudio → MP3（サムネイル埋め込み） |
+| `1` | bestaudio → Opus（サムネイル埋め込み） |
+| `2` | 720p MP4 (h264 + mp4a)（サムネイル埋め込み） |
+| `3` | best MP4 (h264 + mp4a)（サムネイル埋め込み） |
+| `4` | best MP4 (vp9 + opus)（サムネイル埋め込み） |
+
+## Usage
+
+### Terminal / CLI
+
 ```bash
-yt_dlp_expand [-h] [-p PATH] Download_mode url
+yt_dlp_expand [-h] [-p PATH] [-l DOWNLOAD_PLAYLIST] download_mode url
 ```
-positional arguments:
-  Download_mode         0:bestaudio(mp3),
-                        1:bestaudio(opus),
-                        2:720p,mp4(h264,mp4a),
-                        3:bestvideo(mp4(h264,mp4a)),
-                        4:bestvideo(mp4(vp9,opus))
-  url                   url
 
-options:
-  -h, --help            show this help message and exit
-  -p PATH, --path PATH  downloadMode dir path, 
+**positional arguments:**
 
-path default: PC -> "~/Downloads" , iOS -> "~/Documents"
+| 引数 | 説明 |
+|------|------|
+| `download_mode` | ダウンロードモード (0〜4) |
+| `url` | 動画またはプレイリストの URL |
 
-#### Used from python
+**options:**
+
+| オプション | 説明 |
+|-----------|------|
+| `-p PATH`, `--path PATH` | 保存先ディレクトリパス（省略時: PC → `~/Downloads`, iOS → `~/Documents`） |
+| `-l`, `--download_playlist` | プレイリスト全体をダウンロードするか（default: False） |
+
+**Examples:**
+```bash
+# MP3 でダウンロード
+yt_dlp_expand 0 "https://www.youtube.com/watch?v=xxxx"
+
+# 720p MP4 で指定ディレクトリに保存
+yt_dlp_expand 2 "https://www.youtube.com/watch?v=xxxx" -p ~/Movies
+
+# プレイリストをまとめてダウンロード
+yt_dlp_expand 1 "https://www.youtube.com/playlist?list=xxxx" -l true
+```
+
+### Python ライブラリとして使う
+
 ```python
-from yt_dlp_expand import ExpandYt_dlp
-Class_Yt_dlp = ExpandYt_dlp(DownloadMode, url, path)
-Class_Yt_dlp.main_func()
+from yt_dlp_expand import DownloadMode, ExpandYt_dlp
+
+obj = ExpandYt_dlp(DownloadMode.AUDIO_MP3, "https://www.youtube.com/watch?v=xxxx")
+obj.run()
 ```
-For each argument, see Terminal use.
 
 ## Built With
-* [yt-dlp](https://github.com/yt-dlp/yt-dlp) - main
-* [mutagen](https://mutagen.readthedocs.io/en/latest/) - marge file thumbnail mp3,opus
-* [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) - marge file thumbnail mp4 , crop thumbnail square
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) — 動画ダウンロード
+- [mutagen](https://mutagen.readthedocs.io/en/latest/) — MP3/Opus へのサムネイル埋め込み
+- [ffmpeg-python](https://github.com/kkroening/ffmpeg-python) — MP4 へのサムネイル埋め込み・クロップ
 
 ## Authors
-* **河野 颯之介(Sonosuke Kono)**
+
+- **河野 颯之介 (Sonosuke Kono)**
 
 ## License
-This project is licensed under Apache License, Version 2.0 - see the [LICENSE.md](LICENSE.md) file for details.   
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
