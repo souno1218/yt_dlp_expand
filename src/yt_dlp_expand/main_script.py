@@ -424,15 +424,23 @@ class ExpandYt_dlp:
         3. 最終ファイルをタイトル名にリネームする。
            Rename the output file to the video title.
         """
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            f_title = executor.submit(self.get_title)
-            f_thumb = executor.submit(self.download_thumbnail_jpg)
-            f_file  = executor.submit(self.download_file)
-            # 例外が発生していればここで再 raise する
-            # Re-raise any exceptions from the parallel tasks.
-            f_title.result()
-            f_thumb.result()
-            f_file.result()
+        if self.is_pc:
+            # PC: 並列実行 / Run in parallel on desktop.
+            with ThreadPoolExecutor(max_workers=3) as executor:
+                f_title = executor.submit(self.get_title)
+                f_thumb = executor.submit(self.download_thumbnail_jpg)
+                f_file  = executor.submit(self.download_file)
+                # 例外が発生していればここで再 raise する
+                # Re-raise any exceptions from the parallel tasks.
+                f_title.result()
+                f_thumb.result()
+                f_file.result()
+        else:
+            # iOS/iPadOS: 逐次実行（同時 Python プロセス数の制限を回避）
+            # Run sequentially on iOS to avoid "Too many Python scripts" error.
+            self.get_title()
+            self.download_thumbnail_jpg()
+            self.download_file()
 
         match self.mode_num:
             case 0:
