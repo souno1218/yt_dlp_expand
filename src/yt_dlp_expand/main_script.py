@@ -27,10 +27,25 @@ from mutagen.oggopus import OggOpus
 
 logger = logging.getLogger(__name__)
 
-# ファイル名として使えない文字と置換先の対応表
-# Mapping of characters invalid in filenames to their replacements.
+# ファイル名として使えない文字と置換先の対応表（iOS互換のためASCIIのみ使用）
+# Mapping of characters invalid in filenames to ASCII-safe replacements.
+# Full-width Unicode alternatives (「」／) are intentionally avoided because
+# iOS file management APIs can mishandle them, causing Quick Look failures.
 _INVALID_CHARS = str.maketrans(
-    {":": "-", "[": "「", "]": "」", "/": "／", "\n": " ", "'": "'"}
+    {
+        ":":  "-",
+        "[":  "(",
+        "]":  ")",
+        "/":  "-",
+        "\\": "-",
+        "\n": " ",
+        "?":  "",
+        "*":  "",
+        '"':  "",
+        "<":  "",
+        ">":  "",
+        "|":  "",
+    }
 )
 
 _RANDOM_TITLE_LEN = 20
