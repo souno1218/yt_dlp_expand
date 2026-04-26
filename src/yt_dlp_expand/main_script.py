@@ -78,8 +78,7 @@ def get_playlist_title(playlist_url: str) -> str | None:
             "--no-check-certificate",
         ],
         encoding="utf-8",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
     )
     title = _sanitize_filename(cp.stdout.split("\n")[0])
     return title if title else None
@@ -101,8 +100,7 @@ def split_playlist_url(playlist_url: str) -> list[str]:
             "--no-check-certificate",
         ],
         encoding="utf-8",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
     )
     list_url = [u for u in cp.stdout.split("\n") if u]
     if not list_url:
@@ -217,8 +215,7 @@ class ExpandYt_dlp:
                 "--no-playlist",
             ],
             encoding="utf-8",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
         title = _sanitize_filename(cp.stdout.replace("\n", ""))
         if not title:
@@ -248,8 +245,7 @@ class ExpandYt_dlp:
                 "--convert-thumbnails", "jpg",
                 "--output", str(stem),
             ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
 
         jpg_path  = stem.with_suffix(".jpg")
@@ -303,8 +299,7 @@ class ExpandYt_dlp:
 
         subprocess.run(
             base_cmd + extra,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
 
         file_path = stem.with_suffix(f".{self.ext}")
@@ -468,8 +463,12 @@ def main() -> None:
         "4: best mp4 (vp9 + opus)"
     )
     parser.add_argument("download_mode", type=int, help=mode_help, choices=list(range(5)))
-    parser.add_argument("url", type=str, help="動画またはプレイリストの URL / Video or playlist URL")
-    parser.add_argument("-p", "--path", type=str, help="保存先ディレクトリパス / Download directory path")
+    parser.add_argument(
+        "url", type=str, help="動画またはプレイリストの URL / Video or playlist URL"
+    )
+    parser.add_argument(
+        "-p", "--path", type=str, help="保存先ディレクトリパス / Download directory path"
+    )
     parser.add_argument(
         "-l",
         "--download_playlist",
@@ -504,5 +503,8 @@ def main() -> None:
             ExpandYt_dlp(args.download_mode, video_url, dir_path).run()
     else:
         if is_url_contain_playlist:
-            logger.info("Playlist URL detected, but --download_playlist is False. Downloading single video.")
+            logger.info(
+                "Playlist URL detected, but --download_playlist is False. "
+                "Downloading single video."
+            )
         ExpandYt_dlp(args.download_mode, args.url, args.path).run()
