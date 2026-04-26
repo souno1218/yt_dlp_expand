@@ -1,5 +1,5 @@
 from .main_script import DownloadMode, ExpandYt_dlp, main
 
-__version__ = "0.4.12.dev4"
+__version__ = "0.4.12.dev5"
 
 __all__ = ["DownloadMode", "ExpandYt_dlp", "main", "__version__"]

@@ -31,6 +31,16 @@ from yt_dlp_expand.main_script import _sanitize_filename
         ("it's fine", "it's fine"),
         # 空文字列
         ("", ""),
+        # Unicode 制御文字 (Cc) が除去されること
+        ("title\x00hidden", "titlehidden"),
+        # Unicode 書式文字 (Cf): ゼロ幅スペース U+200B が除去されること
+        ("zero​width", "zerowidth"),
+        # Unicode 書式文字 (Cf): BOM U+FEFF が除去されること
+        ("﻿title", "title"),
+        # Unicode 書式文字 (Cf): BiDi 制御文字 U+200F が除去されること
+        ("bidi‏mark", "bidimark"),
+        # NFC 正規化: 濁点が結合されること（NFD → NFC）
+        ("\u304b\u3099test", "\u304ctest"),  # NFD か+゛→ NFC が
     ],
 )
 def test_sanitize_filename(raw: str, expected: str) -> None:

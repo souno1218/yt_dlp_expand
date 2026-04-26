@@ -17,6 +17,7 @@ import random
 import string
 import subprocess
 import sys
+import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from enum import IntEnum
 
@@ -48,6 +49,10 @@ _INVALID_CHARS = str.maketrans(
     }
 )
 
+# Unicode カテゴリ Cc (制御文字), Cf (書式文字: BOM/ZWSP/BiDi制御), Cs (サロゲート) を除去する。
+# Remove Unicode categories Cc (control), Cf (format: BOM/ZWSP/BiDi marks), Cs (surrogates).
+_UNSAFE_UNICODE_CATEGORIES = frozenset(("Cc", "Cf", "Cs"))
+
 _RANDOM_TITLE_LEN = 20
 
 
@@ -62,11 +67,18 @@ class DownloadMode(IntEnum):
 
 
 def _sanitize_filename(title: str) -> str:
-    """ファイル名に使えない文字を全角等価文字に置換する。
+    """ファイル名に使えない文字を置換・除去し、iOS互換の安全な文字列を返す。
 
-    Replace characters invalid in filenames with full-width equivalents.
+    Sanitize a string for use as a filename, ensuring iOS compatibility:
+    1. NFC normalize (composing diacritics, avoiding decomposed forms)
+    2. Replace characters forbidden in filenames with ASCII equivalents
+    3. Strip Unicode control/format/surrogate characters (Cc, Cf, Cs)
+       that can cause iOS Quick Look and Files app failures
     """
-    return title.translate(_INVALID_CHARS).strip()
+    title = unicodedata.normalize("NFC", title)
+    title = title.translate(_INVALID_CHARS)
+    title = "".join(c for c in title if unicodedata.category(c) not in _UNSAFE_UNICODE_CATEGORIES)
+    return title.strip()
 
 
 def _random_str(n: int) -> str:
