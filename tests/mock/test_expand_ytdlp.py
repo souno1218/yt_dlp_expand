@@ -49,9 +49,7 @@ def test_init_invalid_download_mode(tmp_path: pathlib.Path) -> None:
         (DownloadMode.VIDEO_BEST_VP9, "mp4"),
     ],
 )
-def test_init_ext_by_mode(
-    tmp_path: pathlib.Path, mode: DownloadMode, expected_ext: str
-) -> None:
+def test_init_ext_by_mode(tmp_path: pathlib.Path, mode: DownloadMode, expected_ext: str) -> None:
     """DownloadMode ごとに正しい拡張子が設定されること。"""
     with patch("yt_dlp_expand.main_script.check_is_pc", return_value=True):
         obj = ExpandYt_dlp(mode, "https://example.com/", tmp_path)
@@ -59,7 +57,7 @@ def test_init_ext_by_mode(
 
 
 # -------------------------------------------------------------------
-# run() のテスト（各メソッドをモック）
+# run() のテスト(各メソッドをモック)
 # -------------------------------------------------------------------
 
 
@@ -116,9 +114,7 @@ def test_run_calls_all_methods_mode1(tmp_path: pathlib.Path) -> None:
 
 
 @pytest.mark.parametrize("mode", [2, 3, 4])
-def test_run_calls_merge_mp4_for_video_modes(
-    tmp_path: pathlib.Path, mode: int
-) -> None:
+def test_run_calls_merge_mp4_for_video_modes(tmp_path: pathlib.Path, mode: int) -> None:
     """mode 2/3/4 (video) で merge_file_thumbnail_mp4 が呼ばれること。"""
     obj = _make_obj(tmp_path, mode)
 

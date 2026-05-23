@@ -41,7 +41,7 @@ def test_download_audio_mp3(tmp_path: pathlib.Path) -> None:
     out = _run_download(tmp_path, DownloadMode.AUDIO_MP3)
     assert out.stat().st_size > 0
     tags = ID3(str(out))
-    assert "APIC:" in tags, "Thumbnail should be embedded as APIC tag"
+    assert any(k.startswith("APIC:") for k in tags), "Thumbnail should be embedded as APIC tag"
 
 
 @pytest.mark.integration
